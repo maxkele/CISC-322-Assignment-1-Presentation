@@ -1,3 +1,15 @@
+@font-face
+{
+    font-family: "Heebo Black";
+    src: url("./assets/fonts/Heebo-Black.ttf");
+}
+
+@font-face
+{
+    font-family: "Heebo Medium";
+    src: url("./assets/fonts/Heebo-Medium.ttf");
+}
+
 html
 {
     font-family: sans-serif;
@@ -37,6 +49,7 @@ li
 h1
 {
     font-size: 2rem;
+    font-family: "Heebo Black";
     text-transform: uppercase;
     letter-spacing: 0.1rem;
     display: inline-block; 
@@ -46,9 +59,8 @@ h1
 
 p
 {
-    font-family: sans-serif;
+    font-family: "Heebo Medium", sans-serif;
     text-emphasis: true;
-    font-size: 0.9rem;
 }
 
 hr
@@ -62,6 +74,7 @@ hr
 footer
 {
     text-align: center;
+    font-size: 0.8rem;
 }
 
 @media only screen and (max-width: 550px)
