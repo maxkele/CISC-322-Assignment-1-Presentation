@@ -12,7 +12,7 @@
 
 html
 {
-    font-family: sans-serif;
+    font-family: "Heebo Medium";
     padding: 50px;
     margin: 0px;
     background: #FBBC05;
@@ -22,6 +22,7 @@ a
 {
     text-decoration: none;
     color: black; 
+    font-family: inherit;
 }
 
 ul 
