@@ -3,7 +3,14 @@ html
     font-family: sans-serif;
     padding: 50px;
     margin: 0px;
-    background: #FFD241;
+    background: #FBBC05;
+}
+
+#title
+{
+    padding: 10px;
+    background: #ffffff;
+    box-shadow: 50px, 50px, black;
 }
 
 h1
@@ -11,10 +18,8 @@ h1
     font-size: 2rem;
     text-transform: uppercase;
     letter-spacing: 0.2rem;
-    margin: 0px 0px 10px 0px;
-    display: inline-block;
-    padding: 20px;
-    background: #ffffff;
+    display: inline-block; 
+
 }
 
 p
