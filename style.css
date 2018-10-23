@@ -7,10 +7,10 @@
 
 html
 {
-    font-family: "Impact";
+    font-family: sans-serif;
     padding: 50px;
     margin: 0px;
-    background: #ffc710;
+    background: #FFD241;
 }
 
 h1
@@ -21,6 +21,7 @@ h1
     margin: 0px 0px 10px 0px;
     display: inline-block;
     padding: 20px;
+    background: #ffffff;
 }
 
 p
@@ -28,4 +29,12 @@ p
     font-family: sans-serif;
     text-emphasis: true;
     font-size: 0.9rem;
+}
+
+hr
+{
+    background: #000; 
+    border: 0; 
+    color: #000;
+    height: 3px;
 }
