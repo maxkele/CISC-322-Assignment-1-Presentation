@@ -37,8 +37,15 @@ ul
     background: #ffffff;
     box-shadow: 5px 5px black;
     display: inline-block;
+    margin: 4px;
     border: 1px solid black;
-    
+    transition: all ease 0.1s;
+}
+
+.download:hover 
+{
+    margin: 0px 8px 8px 0px;
+    box-shadow: 9px 9px black;
 }
 
 li
