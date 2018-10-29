@@ -41,7 +41,7 @@
 <p>Our group tackled this challenge by first splitting up into three groups of two. We individually researched the architecture of Chrome (using many of the resources found during Assignment 0<sup><a href="#fn6-27649" id="fnr6-27649" title="see footnote" class="footnote">6</a></sup>), and each created a model of what we determined the architecture to be. We then met up and were quickly able to identify the disagreements we had between our architectures. Through further research and constructive debate, we formed a synthesis of our initial concepts that we could all agree upon. Research into each component allowed us to refine this final version better and justify our decisions. Pictured below are three of the first architectures that we developed.</p>
 
 <figure>
-<img src="//drafts.png" alt="Fig 1. Three of our initial concepts. Diagram A, B, and C, from left to right." />
+<img src="drafts.png" alt="Fig 1. Three of our initial concepts. Diagram A, B, and C, from left to right." />
 <figcaption><em>Fig 1. Three of our initial concepts. Diagram A, B, and C, from left to right.</em></figcaption>
 </figure>
 
@@ -51,7 +51,7 @@
 <h1>Conceptual Architecture</h1>
 
 <figure>
-<img src="//conceptual.png" alt="Fig 2. The final conceptual architecture." />
+<img src="conceptual.png" alt="Fig 2. The final conceptual architecture." />
 <figcaption><em>Fig 2. The final conceptual architecture.</em></figcaption>
 </figure>
 
@@ -59,7 +59,7 @@
 
 <p>Although the conceptual architecture we will discuss in this report is Object Oriented, when the components are rearranged, a Loosely Layered architecture is revealed (<em>Fig 3</em>). It is not strictly layered due to the Plugin subsystem's ability to access the Render and Local Storage subsystem directly, however, we decided that it would not be practical for Plugin to make these requests through Browser (further explained in the Plugin section). Because of these inconsistencies, we decided that the Object Oriented diagram (<em>Fig 2</em>) represented our architecture model better. Despite this, we still feel that the Layered diagram is useful for understanding aspects of how our architecture functions. For example, it clearly shows the two highest layers of the system: UI (the central subsystem the user interacts with), and Plugin (the subsystem 3rd-party developers interact with).</p>
 <figure>
- <img src="//layered.png" alt="An alternative arrangement, revealing a (loosely) Layered design." style="margin: 0 auto; max-width: 400px;">
+ <img src="layered.png" alt="An alternative arrangement, revealing a (loosely) Layered design." style="margin: 0 auto; max-width: 400px;">
  <figcaption><em>Fig 3. An alternative arrangement, revealing a (loosely) Layered design.</em></figcaption>
 </figure>
 
@@ -90,7 +90,7 @@
 
 <h2>Render</h2>
 <figure>
- <img src="//blink.png" alt="Fig 4. The conceptual architecture for the Render subsystem." style="margin: 0 auto; max-width: 500px;">
+ <img src="blink.png" alt="Fig 4. The conceptual architecture for the Render subsystem." style="margin: 0 auto; max-width: 500px;">
  <figcaption><em>Fig 4. The conceptual architecture for the Render subsystem.</em></figcaption>
 </figure>
 
@@ -107,7 +107,7 @@ V8 uses an interpreter and compilation pipeline for efficiency. In this process,
 V8 also uses a Generational Garbage Collector, as V8 handles memory allocation. Every time there needs to be me more memory allocated to an object, V8 checks if they have existed for 5 different allocations, in which case they are labelled &quot;old&quot; and freed from the heap<sup><a href="#fn15-27649" id="fnr15-27649" title="see footnote" class="footnote">15</a></sup>.
 Once the JavaScript has run, anything that needs to be rendered is passed back to the Blink engine.</p>
 <figure>
- <img src="//flow.png" alt="Fig 5. A diagram of the V8 workflow." style="margin: 0 auto; max-width: 510px;">
+ <img src="flow.png" alt="Fig 5. A diagram of the V8 workflow." style="margin: 0 auto; max-width: 510px;">
  <figcaption><em>Fig 5. A diagram of the V8 workflow.</em></figcaption>
 </figure>
 
@@ -130,7 +130,7 @@ Once the JavaScript has run, anything that needs to be rendered is passed back t
 
 <p>One of the two subsystems we chose to investigate is UI. Our architecture is a combination of Objects and Implicit Invocation.</p>
 <figure>
- <img src="//ui.png" alt="Conceptual architecture of the UI subsystem." style="margin: 0 auto; max-width: 400px;">
+ <img src="ui.png" alt="Conceptual architecture of the UI subsystem." style="margin: 0 auto; max-width: 400px;">
  <figcaption><em>Fig 7. Conceptual architecture of the UI subsystem.</em></figcaption>
 </figure>
 
@@ -155,7 +155,7 @@ Chrome also uses standard Javascript runtime concurrency for code execution; the
 <h2>Sequence Diagram 1</h2>
 
 <figure>
-<img src="//Sequence1.png" alt="Fig 8. Sequence Diagram of a user entering a password, and Chrome saving it." />
+<img src="Sequence1.png" alt="Fig 8. Sequence Diagram of a user entering a password, and Chrome saving it." />
 <figcaption><em>Fig 8. Sequence Diagram of a user entering a password, and Chrome saving it.</em></figcaption>
 </figure>
 
@@ -164,7 +164,7 @@ Chrome also uses standard Javascript runtime concurrency for code execution; the
 <h2>Sequence Diagram 2</h2>
 
 <figure>
-<img src="//sequence2.png" alt="Fig 9. Sequence Diagram of a page with javascript being rendered." />
+<img src="Sequence2.png" alt="Fig 9. Sequence Diagram of a page with javascript being rendered." />
 <figcaption><em>Fig 9. Sequence Diagram of a page with javascript being rendered.</em></figcaption>
 </figure>
 
