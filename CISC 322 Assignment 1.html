@@ -1,0 +1,314 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>CISC 322 Assignment 1</title>
+</head>
+<body>
+<h1>CISC 322 Assignment 1</h1>
+
+<h4>Inspect Element:</h4>
+
+<h4>Roberto Ruiz, Matthew Pollock, Maxwell Keleher, Joseph Gravenor, Jack Guinane, Jon Gallucci</h4>
+<div style="page-break-before: always;"></div>
+
+<h2>Abstract</h2>
+
+<p>This report is a presentation of our analysis of the Google Chrome web browser, which was developed as part of the Chromium open-source project<sup><a href="#fn1-27649" id="fnr1-27649" title="see footnote" class="footnote">1</a></sup>. Our mission was to develop a conceptual architecture of Google Chrome using the existing documentation. Through this research, we came to a predominantly Object Oriented architecture. We will go into further detail regarding the architecture style and the subsystems present, as well as how we arrived at this model. We will explore the functionality of our architecture through two sequence diagrams, depicting different use cases. Finally, we will conclude with team issues and lessons learned. This report will act as a foundation when developing a particular architecture in the future.</p>
+
+<h2>Description</h2>
+
+<p>Google Chrome is an internet browser written using C++<sup><a href="#fn2-27649" id="fnr2-27649" title="see footnote" class="footnote">2</a></sup>. The stable branch offers significant updates every six weeks, and minor updates every two or three weeks<sup><a href="#fn3-27649" id="fnr3-27649" title="see footnote" class="footnote">3</a></sup>. However, users have the option to get faster update cycles on less stable branches<sup><a href="#fn3-27649" title="see footnote" class="footnote">3</a></sup>. The Chrome project focuses on four main non-functional requirements: simplicity, speed, security, and stability<sup><a href="#fn4-27649" id="fnr4-27649" title="see footnote" class="footnote">4</a></sup>.</p>
+
+<h2>Stakeholders</h2>
+
+<p>To better understand Chrome, we first defined who the stakeholders of Chrome were, and their interaction with the software. The most relevant stakeholders are outlined below:</p>
+
+<ul>
+<li><strong>User.</strong> This is the consumer who downloads and uses Chrome to browse the internet.</li>
+<li><strong>The Chromium team.</strong> This is the team of developers who created and maintain Chrome. They are made up of Google employees as well as members of the open source community.</li>
+<li><strong>Alphabet.</strong> This is the company that owns Google, and by extension, Chrome. They are the investors and owners of the product.</li>
+<li><strong>Website owners.</strong> The owners of the content Chrome browses and displays.</li>
+<li><strong>3rd-party developers.</strong> These are the developers who are uninvolved with the direct development of Chrome but create extensions for the software (see the Chrome Web Store<sup><a href="#fn5-27649" id="fnr5-27649" title="see footnote" class="footnote">5</a></sup>).</li>
+</ul>
+
+<h2>Derivation Process</h2>
+
+<p>Our group tackled this challenge by first splitting up into three groups of two. We individually researched the architecture of Chrome (using many of the resources found during Assignment 0<sup><a href="#fn6-27649" id="fnr6-27649" title="see footnote" class="footnote">6</a></sup>), and each created a model of what we determined the architecture to be. We then met up and were quickly able to identify the disagreements we had between our architectures. Through further research and constructive debate, we formed a synthesis of our initial concepts that we could all agree upon. Research into each component allowed us to refine this final version better and justify our decisions. Pictured below are three of the first architectures that we developed.</p>
+
+<figure>
+<img src="//drafts.png" alt="Fig 1. Three of our initial concepts. Diagram A, B, and C, from left to right." />
+<figcaption><em>Fig 1. Three of our initial concepts. Diagram A, B, and C, from left to right.</em></figcaption>
+</figure>
+
+<p>As you can see, some of our architectures differed in scope (Diagram C was too broad), differed in naming (Diagram A uses names that were different from those others came up with), and some contained subsystems we determined were unnecessary (such as with Diagram B). Through this process, we concluded on a Network, Browser, UI, and Local Storage component, and moved V8 into its own subsystem, as it better represented the documentation we found.</p>
+<div style="page-break-before: always;"></div>
+
+<h1>Conceptual Architecture</h1>
+
+<figure>
+<img src="//conceptual.png" alt="Fig 2. The final conceptual architecture." />
+<figcaption><em>Fig 2. The final conceptual architecture.</em></figcaption>
+</figure>
+
+<p>Our architecture mainly uses an Object Oriented architecture style, which enables each subsystem to be developed, more or less, discreetly from the rest of the system. This allows the Chromium team to develop the UI separately from the Network subsystem (for example), and is one of the reasons Chrome can have a short development cycle. The benefit of this architecture is that it has high cohesion and low coupling, both of which allow the software to be developed and maintained more easily. </p>
+
+<p>Although the conceptual architecture we will discuss in this report is Object Oriented, when the components are rearranged, a Loosely Layered architecture is revealed (<em>Fig 3</em>). It is not strictly layered due to the Plugin subsystem's ability to access the Render and Local Storage subsystem directly, however, we decided that it would not be practical for Plugin to make these requests through Browser (further explained in the Plugin section). Because of these inconsistencies, we decided that the Object Oriented diagram (<em>Fig 2</em>) represented our architecture model better. Despite this, we still feel that the Layered diagram is useful for understanding aspects of how our architecture functions. For example, it clearly shows the two highest layers of the system: UI (the central subsystem the user interacts with), and Plugin (the subsystem 3rd-party developers interact with).</p>
+<figure>
+ <img src="//layered.png" alt="An alternative arrangement, revealing a (loosely) Layered design." style="margin: 0 auto; max-width: 400px;">
+ <figcaption><em>Fig 3. An alternative arrangement, revealing a (loosely) Layered design.</em></figcaption>
+</figure>
+
+<h2>Local Storage</h2>
+
+<p>The Local Storage subsystem is the component in charge of storing data onto the user's computer. As multiple subsystems require the ability to save data to the user's machine, it becomes necessary to create a subsystem to outsource this work. This increases cohesion within those subsystems and reduces the amount of code that needs to be rewritten. Local Storage should also be capable of encrypting and decrypting files, allowing for the safe storage of passwords and other sensitive data. As a further security precaution, Local Storage should limit the access components have to the data stored. For example, preventing the 3rd-party extension from accessing data saved by the Password Manager<sup><a href="#fn7-27649" id="fnr7-27649" title="see footnote" class="footnote">7</a></sup>. Local Storage does not depend on any other subsystem; it is its own discrete system.</p>
+
+<h2>Network</h2>
+
+<p>The Network subsystem, or &quot;Network Stack&quot; as it is referred to by the Chromium team<sup><a href="#fn8-27649" id="fnr8-27649" title="see footnote" class="footnote">8</a></sup>, is the subsystem dedicated to fetching and returning requested files. It is passed a URL, which locates the desired resource. Network fetches this resource and returns the file to the Browser subsystem<sup><a href="#fn9-27649" id="fnr9-27649" title="see footnote" class="footnote">9</a></sup>. Network is also used to retrieve the cookies, host resolver, and proxy resolver that is associated with the inputted URL (this &quot;context,&quot; however, is returned through a separate request from the previously described URL fetch<sup><a href="#fn9-27649" title="see footnote" class="footnote">9</a></sup>). We believe that the Network subsystem would also be capable of following file paths on the user's computer, such as when you open a PDF in Chrome, and it displays the file under a URL like &quot;<em>file:///Users/usr1/filename.pdf</em>&quot;. This capability would allow the Browser subsystem to request any resource from Network (regardless of type); although we were unable to find any documentation that confirms or denies this.</p>
+
+<p>Network only depends on the Local Storage subsystem. This subsystem is required for saving long-term data (such as cookies, cached files, etc.) on the user's machine.</p>
+
+<p>Despite most operating systems having their own command or framework for accessing the internet (such as wget, or curl), the Chromium team chose to develop their own cross-platform framework for doing these operations within Network<sup><a href="#fn8-27649" title="see footnote" class="footnote">8</a></sup>. Their decision to create their own system was made to eliminate bugs found in the native frameworks and allows them to build faster and more efficient processes for retrieving content<sup><a href="#fn8-27649" title="see footnote" class="footnote">8</a></sup>. As &quot;speed&quot; is one of the product's four main non-functional requirements<sup><a href="#fn4-27649" title="see footnote" class="footnote">4</a></sup>, the investment into the development of such a system was worth it to the Chromium team.</p>
+
+<h2>Browser</h2>
+
+<p>The Browser subsystem is the central backend subsystem of our architecture. It is not to be confused with &quot;the browser&quot; in the general sense (which is often used to mean the <em>concept</em> of a web browser), but rather the subsystem that the Chromium team refers to as the &quot;Browser Kernel&quot;<sup><a href="#fn10-27649" id="fnr10-27649" title="see footnote" class="footnote">10</a></sup>. It handles events, and delegates tasks to the subsystems layered underneath it. Chrome's concurrency model requires a dedicated subsystem to create and manage new instances<sup><a href="#fn10-27649" title="see footnote" class="footnote">10</a></sup>, and the Browser allows one centralised unit to do so. The Browser has four primary responsibilities:</p>
+
+<ul>
+<li>Handle events</li>
+<li>Delegate operations to the lower subsystems</li>
+<li>Manage concurrency</li>
+<li>Check the security of specific subsystems (check Network for viruses, Plugins for malicious 3rd-party software, etc.)</li>
+</ul>
+
+<p>The Browser depends on two subsystems: Network and Render. Network is required for fetching resources such as web pages, which the Browser then renders. To render these web pages, the Browser depends on Render<sup><a href="#fn11-27649" id="fnr11-27649" title="see footnote" class="footnote">11</a></sup>.</p>
+
+<h2>Render</h2>
+<figure>
+ <img src="//blink.png" alt="Fig 4. The conceptual architecture for the Render subsystem." style="margin: 0 auto; max-width: 500px;">
+ <figcaption><em>Fig 4. The conceptual architecture for the Render subsystem.</em></figcaption>
+</figure>
+
+<p>The Render subsystem is the primary subsystem that handles the code painting and rendering for the browser.
+The way Render works, is for each render process request from Browser, the renderer spawns a new RenderProcess in the main worker thread. This handles all communication to the Render thread that performs a majority of the heavy processing<sup><a href="#fn12-27649" id="fnr12-27649" title="see footnote" class="footnote">12</a></sup>.
+Within the Render Thread, there is a Render View Controller. It can be implicitly invocated depending on the required amount of Render Views needed to maintain site isolation.
+Also contained within the Render Worker Thread is the Resource Dispatcher. This is responsible for dispatching all resources<sup><a href="#fn13-27649" id="fnr13-27649" title="see footnote" class="footnote">13</a></sup> that Blink requires to complete the actual rendering of the elements.
+Finally, Blink is the main rendering Engine for the Render Process. It does all the heavy lifting, such as running animations, building the DOM, passing and rendering HTML/CSS, and handling memory. Blink spawns a new V8 worker thread, and the JavaScript on the page is compiled and ran using the V8 APIS<sup><a href="#fn11-27649" title="see footnote" class="footnote">11</a></sup>. Blink is the subsystem required to send V8 the DOM, as V8 is unable to build this itself.</p>
+
+<h2>V8</h2>
+
+<p>V8 is the subsystem responsible for interpreting/compiling javascript and running it on the hardware.
+V8 uses an interpreter and compilation pipeline for efficiency. In this process, the code is interpreted by Ignition into bytecode; however, functions are left as references at this stage. Functions are instead passed to Turbofan and compiled for faster execution<sup><a href="#fn14-27649" id="fnr14-27649" title="see footnote" class="footnote">14</a></sup>.
+V8 also uses a Generational Garbage Collector, as V8 handles memory allocation. Every time there needs to be me more memory allocated to an object, V8 checks if they have existed for 5 different allocations, in which case they are labelled &quot;old&quot; and freed from the heap<sup><a href="#fn15-27649" id="fnr15-27649" title="see footnote" class="footnote">15</a></sup>.
+Once the JavaScript has run, anything that needs to be rendered is passed back to the Blink engine.</p>
+<figure>
+ <img src="//flow.png" alt="Fig 5. A diagram of the V8 workflow." style="margin: 0 auto; max-width: 510px;">
+ <figcaption><em>Fig 5. A diagram of the V8 workflow.</em></figcaption>
+</figure>
+
+<h2>Plugin</h2>
+
+<p>The Plugin subsystem is the subsystem in which Chrome Extensions are built on top of<sup><a href="#fn16-27649" id="fnr16-27649" title="see footnote" class="footnote">16</a></sup>. These extensions are <em>not</em> developed as systems inside of the plugin component, but rather, extensions are built <em>using</em> the plugin component. By doing so, Chrome can limit extensions to one entry point in the architecture (<em>Fig. 6</em>). The Plugin subsystem is sandboxed by Chrome<sup><a href="#fn16-27649" title="see footnote" class="footnote">16</a></sup>, limiting privileges and resources to extensions.</p>
+
+<p>Chrome Extensions are built using this subsystem<sup><a href="#fn5-27649" title="see footnote" class="footnote">5</a></sup>. These extensions range from content blockers such as Adblock<sup><a href="#fn17-27649" id="fnr17-27649" title="see footnote" class="footnote">17</a></sup> to coupon-finders like Honey<sup><a href="#fn18-27649" id="fnr18-27649" title="see footnote" class="footnote">18</a></sup>. The Chromium team also builds additional features of Chrome using this same subsystem. These features include all non-essential additions to the application, such as Sync<sup><a href="#fn19-27649" id="fnr19-27649" title="see footnote" class="footnote">19</a></sup>, Bookmarks, and even the Password Manager. Despite these features being included in Chrome by default (unlike 3rd-party extensions), it makes sense to build them with the Plugin subsystem as it prevents anyone subsystem becoming bloated with these new features and lowers coupling. Instead, each new feature can be written separately from the rest of the software, allowing for the Chromium team to update the UI without making changes to the Sync extension, and to develop the Password Manager without affecting the rendering engine (for example). A diagram explaining this idea is depicted below.</p>
+
+<figure>
+<img src="fig1.png" alt="Fig 6. The interaction extensions have with the Plugin subsystem." />
+<figcaption><em>Fig 6. The interaction extensions have with the Plugin subsystem.</em></figcaption>
+</figure>
+
+<p>The Plugin subsystem has three dependencies: Render, Browser, and Local Storage. The system requires Render to interact with the DOM tree directly. By reading and editing the DOM tree, extensions can inject themselves into the webpage (such as Adblock removing advertising elements from the page). Local Storage is used to save data to the user's computer, such as settings<sup><a href="#fn7-27649" title="see footnote" class="footnote">7</a></sup>, passwords, etc. However, each extension only has access to the files it creates, preventing malicious 3rd-party extensions from accessing sensitive user data. Finally, the Plugin subsystem depends on the Browser subsystem to provide it events (new webpage, I/O event, etc.), and to make network requests. The Plugin subsystem does not have direct access to the Network, and therefore must go through the Browser to request these resources. This allows the Browser to vet the extension's requests.</p>
+
+<h2>UI</h2>
+
+<p>The UI (User Interface) component is the subsystem allowing user interaction with Chrome. By creating a discrete subsystem to handle the user input, the Chromium team can update the design of Chrome frequently, without affecting the functionality of the software. The UI subsystem depends on the Browser subsystem to supply it with the webpage, extensions, URLs, and any other information the UI will need to render the application window. Note that the Render subsystem and V8 have already processed the webpage; the UI must instead render the webpage in the application window and display it to the user.</p>
+
+<p>One of the two subsystems we chose to investigate is UI. Our architecture is a combination of Objects and Implicit Invocation.</p>
+<figure>
+ <img src="//ui.png" alt="Conceptual architecture of the UI subsystem." style="margin: 0 auto; max-width: 400px;">
+ <figcaption><em>Fig 7. Conceptual architecture of the UI subsystem.</em></figcaption>
+</figure>
+
+<p>The Views subsystem is a cross-platform component responsible for layout, UI rendering, and event handling<sup><a href="#fn20-27649" id="fnr20-27649" title="see footnote" class="footnote">20</a></sup>. Views are used on Windows, Linux, and Chrome OS, however, the native UI framework is used on MacOS, iOS, and Android<sup><a href="#fn21-27649" id="fnr21-27649" title="see footnote" class="footnote">21</a></sup>. The subsystem works by having layers of &quot;views.&quot; </p>
+
+<p>Views rely on three subsystems within UI: Skia, GDI, and Widget OS. Widget OS is used to render certain UI elements, such as such as text fields, tables and radio buttons, from the OS’s built-in features<sup><a href="#fn22-27649" id="fnr22-27649" title="see footnote" class="footnote">22</a></sup>. These elements could be rendered using GDI and Skia, however doing so would be inefficient, as the OS does these natively, and the subsystem could not be cross-platform (each OS would differ). Widget OS also is registered with the operating system to receive messages (These messages include things like WM_PAINT and WM_LBUTTONDOWN<sup><a href="#fn23-27649" id="fnr23-27649" title="see footnote" class="footnote">23</a></sup>) from the OS. Views depend on Widget OS to translate these OS messages into an understandable format. The second of these systems is the Skia Graphics engine, which Views use to render non-text portions of the UI such as SVG, Canvas, etc<sup><a href="#fn22-27649" title="see footnote" class="footnote">22</a></sup>. Finally, the GDI subsystem is responsible for rendering text portions of the UI, such as fonts<sup><a href="#fn22-27649" title="see footnote" class="footnote">22</a></sup>. </p>
+
+<h2>Concurrency</h2>
+
+<p>Chrome has many different Concurrency Models. The main one is done through Javascript workers and a process called Site Isolation<sup><a href="#fn24-27649" id="fnr24-27649" title="see footnote" class="footnote">24</a></sup>. To reduce XSS points, Chrome uses a Process-Per-Site-Instance model where a new Render Process is created per individual object that needs to be rendered<sup><a href="#fn25-27649" id="fnr25-27649" title="see footnote" class="footnote">25</a></sup>. Chrome uses a communication standard named IPC; however, this is currently being replaced by a system called Mojo<sup><a href="#fn26-27649" id="fnr26-27649" title="see footnote" class="footnote">26</a></sup>. All data and the creation of a process is made concurrently using this system.
+Chrome also uses standard Javascript runtime concurrency for code execution; the heap, stack, queue model<sup><a href="#fn26-27649" title="see footnote" class="footnote">26</a></sup>.</p>
+
+<h2>Use Cases</h2>
+
+<p>To explore the functionality of our conceptual architecture, we developed sequence diagrams depicting two use cases provided to us:</p>
+
+<ol>
+<li>User logs into a website and Chrome save the password</li>
+<li>Chrome renders a webpage containing JavaScript</li>
+</ol>
+
+<h2>Sequence Diagram 1</h2>
+
+<figure>
+<img src="//Sequence1.png" alt="Fig 8. Sequence Diagram of a user entering a password, and Chrome saving it." />
+<figcaption><em>Fig 8. Sequence Diagram of a user entering a password, and Chrome saving it.</em></figcaption>
+</figure>
+
+<p>The sequence diagram starts with a user entering their password, prompting the UI to send a new I/O event. This is handled by the Browser, which then requests the Render component to update webpage. Once the webpage is updated, the Browser sends a new event to the Plugin component. The Password Manager (which is built using this Plugin component) is notified of this new event assesses the DOM tree generated by Render to view this inputted from data. Render returns the form's value (the password entered) to the Password Manager. The Password Manager checks Local Storage to see if the password entered has already been saved. In this use case, Local Storage returns that this password has <strong>not</strong> already been stored. The Plugin requests the Browser to create a new popup, which is then rendered by the UI, and finally displayed to the user. The user confirms that they would like this password to be saved by clicking &quot;yes,&quot; triggering a new I/O event. The Browser notifies the Password Manager of this confirmation, and the Password Manager saves the password to the computer using the Local Storage subsystem. These steps are successful, as per the use case, and each subsystem returns &quot;success&quot;.</p>
+
+<h2>Sequence Diagram 2</h2>
+
+<figure>
+<img src="//sequence2.png" alt="Fig 9. Sequence Diagram of a page with javascript being rendered." />
+<figcaption><em>Fig 9. Sequence Diagram of a page with javascript being rendered.</em></figcaption>
+</figure>
+
+<p>This second sequence diagram shows Chrome rendering a webpage that contains JavaScript. The sequence begins with the user making a request to load a URL. The UI component takes this request and passes it to the Browser which then sends this URL request to the Networking component. The page content is then loaded and returned to the browser (not yet rendered). The render request is sent to the Render component which renders the web content that is not JavaScript (CSS, HTML etc). The JavaScript element(s) is passed over to the V8 Render Engine to be processed and passed back. With this rendered, the webpage is then passed back to the Browser, then to the UI, and finally displayed to the User.</p>
+
+<h2>Conclusions</h2>
+
+<p>In summary, our Google Chrome Architecture follows an Objected Oriented style as well being loosely layered. This is what allows Chrome to have such a quick development cycle as subsystems can be updated independently of each other. Furthermore, the sandboxing of the Plugin subsystem makes it easy for users to use 3rd-party extensions without sacrificing security. We also found that Chrome's ability to run all subsystems concurrently increases security, but can cause poor performance. </p>
+
+<p>Moving forward, we will dig deeper into the available documentation and source code to construct a concrete architecture of Google Chrome. The understanding of Chrome we have developed also may be useful if we chose to extend the functionality of Chrome at some point, such as building our own Chrome extension. To determine what improvements should be made we will look to other popular browsers to see what they might be doing that Chrome currently lacks or determine why Chrome is more popular, and refine these aspects.</p>
+
+<h2>Lessons Learned</h2>
+
+<p>The most important thing we learned during this project was discovering how we worked most effectively. At first we tried to split up into pairs but we quickly found that most of our work was accomplished when we were able to sit down together. Moving forward we will make a greater effort to find times for the whole group to get together and tackle problems. The other big thing we learned was that it can be very helpful to use resources outside of Google's own documentation to gain a better high-level understanding of the architecture or subsystems. The Google documentation could provide a lot of detail but could often be difficult to comprehend. If we could have done something differently it would have been to start with using 3rd-party references to gain a general understanding then use the Chromium documentation to investigate specific areas.</p>
+
+<h2>Glossary</h2>
+
+<ul>
+<li>Conceptual Architecture: the developers view of the software architecture</li>
+<li>Google Chrome: web browser released by Google based off of the Chromium project</li>
+<li>Chromium: an open source web browser which Google Chrome was based off of</li>
+<li>HTML: Hyper Text Markup Language is an encoding method used to format a web-page layout</li>
+<li>CSS: Cascading Style Sheets: a means of formatting the style of elements on web pages</li>
+<li>JavaScript: an object-oriented computer programming language commonly used to create interactive effects within web browsers</li>
+<li>DOM: Document Object Model is the universal specification for laying out and providing access to HTML objects</li>
+<li>URL: Uniform Resource Locator is a protocol for specifying addresses on the Internet</li>
+<li>UI: User Interface is an interface allowing the user to communicate with the system. Provides the user with means of input and output</li>
+<li>Blink: a fork of the WebCore component of WebKit, which is originally a fork of the KHTML and KJS libraries from KDE</li>
+<li>Skia: the open source package used by Chrome to render everything besides text</li>
+<li>V8: an open source, lightweight and fast JavaScript interpreter developed by Google for use in Chrome</li>
+<li>Views: Chrome's widget toolkit for creating custom browser interface</li>
+<li>IPC: Interprocess communication is a set of programming interfaces that allow a programmer to coordinate activities among different program processes that can run concurrently in an operating system</li>
+<li>Mojo: a collection of runtime libraries providing a platform-agnostic abstraction of common IPC primitives, a message IDL format, and a bindings library with code generation for multiple target languages to facilitate convenient message passing across arbitrary inter- and intra-process boundaries</li>
+<li>GDI: Graphics Display Interface: a Windows graphics renderer, used by Chrome for text rendering</li>
+</ul>
+
+<h1>External References</h1>
+
+<div class="footnotes">
+<hr />
+<ol>
+
+<li id="fn1-27649">
+<p>https://www.chromium.org/ <a href="#fnr1-27649" title="return to article" class="reversefootnote">&#8617;&#xFE0E;</a></p>
+</li>
+
+<li id="fn2-27649">
+<p>https://chromium.googlesource.com/chromium/src/+/master/styleguide/styleguide.md <a href="#fnr2-27649" title="return to article" class="reversefootnote">&#8617;&#xFE0E;</a></p>
+</li>
+
+<li id="fn3-27649">
+<p>https://www.chromium.org/getting-involved/dev-channel <a href="#fnr3-27649" title="return to article" class="reversefootnote">&#8617;&#xFE0E;</a></p>
+</li>
+
+<li id="fn4-27649">
+<p>https://www.chromium.org/developers/core-principles <a href="#fnr4-27649" title="return to article" class="reversefootnote">&#8617;&#xFE0E;</a></p>
+</li>
+
+<li id="fn5-27649">
+<p>https://chrome.google.com/webstore/category/extensions <a href="#fnr5-27649" title="return to article" class="reversefootnote">&#8617;&#xFE0E;</a></p>
+</li>
+
+<li id="fn6-27649">
+<p>https://qjack001.github.io/CISC-322-Assignment-0/ <a href="#fnr6-27649" title="return to article" class="reversefootnote">&#8617;&#xFE0E;</a></p>
+</li>
+
+<li id="fn7-27649">
+<p>https://developer.chrome.com/extensions/storage <a href="#fnr7-27649" title="return to article" class="reversefootnote">&#8617;&#xFE0E;</a></p>
+</li>
+
+<li id="fn8-27649">
+<p>https://www.chromium.org/developers/design-documents/network-stack <a href="#fnr8-27649" title="return to article" class="reversefootnote">&#8617;&#xFE0E;</a></p>
+</li>
+
+<li id="fn9-27649">
+<p>https://chromium.googlesource.com/chromium/src/+/master/net/docs/life-of-a-url-request.md <a href="#fnr9-27649" title="return to article" class="reversefootnote">&#8617;&#xFE0E;</a></p>
+</li>
+
+<li id="fn10-27649">
+<p>http://dev.chromium.org/developers/design-documents/multi-process-architecture <a href="#fnr10-27649" title="return to article" class="reversefootnote">&#8617;&#xFE0E;</a></p>
+</li>
+
+<li id="fn11-27649">
+<p>https://docs.google.com/document/d/1aitSOucL0VHZa9Z2vbRJSyAIsAz24kX8LFByQ5xQnUg/ <a href="#fnr11-27649" title="return to article" class="reversefootnote">&#8617;&#xFE0E;</a></p>
+</li>
+
+<li id="fn12-27649">
+<p>https://www.chromium.org/developers/design-documents/multi-process-architectureedit#heading=h.p8sox77u21on <a href="#fnr12-27649" title="return to article" class="reversefootnote">&#8617;&#xFE0E;</a></p>
+</li>
+
+<li id="fn13-27649">
+<p>https://www.chromium.org/developers/design-documents/multi-process-resource-loading <a href="#fnr13-27649" title="return to article" class="reversefootnote">&#8617;&#xFE0E;</a></p>
+</li>
+
+<li id="fn14-27649">
+<p>http://benediktmeurer.de/2016/11/25/v8-behind-the-scenes-november-edition/ <a href="#fnr14-27649" title="return to article" class="reversefootnote">&#8617;&#xFE0E;</a></p>
+</li>
+
+<li id="fn15-27649">
+<p>https://medium.com/@_lrlna/garbage-collection-in-v8-an-illustrated-guide-d24a952ee3b8 <a href="#fnr15-27649" title="return to article" class="reversefootnote">&#8617;&#xFE0E;</a></p>
+</li>
+
+<li id="fn16-27649">
+<p>https://www.chromium.org/developers/design-documents/plugin-architecture <a href="#fnr16-27649" title="return to article" class="reversefootnote">&#8617;&#xFE0E;</a></p>
+</li>
+
+<li id="fn17-27649">
+<p>https://www.getadblock.com/chrome/ <a href="#fnr17-27649" title="return to article" class="reversefootnote">&#8617;&#xFE0E;</a></p>
+</li>
+
+<li id="fn18-27649">
+<p>https://www.joinhoney.com/ <a href="#fnr18-27649" title="return to article" class="reversefootnote">&#8617;&#xFE0E;</a></p>
+</li>
+
+<li id="fn19-27649">
+<p>https://support.google.com/chrome/answer/165139?hl=en-GB <a href="#fnr19-27649" title="return to article" class="reversefootnote">&#8617;&#xFE0E;</a></p>
+</li>
+
+<li id="fn20-27649">
+<p>https://www.chromium.org/developers/design-documents/chromeviews <a href="#fnr20-27649" title="return to article" class="reversefootnote">&#8617;&#xFE0E;</a></p>
+</li>
+
+<li id="fn21-27649">
+<p>https://www.quora.com/What-kind-of-UI-framework-is-Google-Chrome-using <a href="#fnr21-27649" title="return to article" class="reversefootnote">&#8617;&#xFE0E;</a></p>
+</li>
+
+<li id="fn22-27649">
+<p>https://www.chromium.org/developers/design-documents/graphics-and-skia <a href="#fnr22-27649" title="return to article" class="reversefootnote">&#8617;&#xFE0E;</a></p>
+</li>
+
+<li id="fn23-27649">
+<p>https://www.youtube.com/watch?v=WsvNebq1dRg <a href="#fnr23-27649" title="return to article" class="reversefootnote">&#8617;&#xFE0E;</a></p>
+</li>
+
+<li id="fn24-27649">
+<p>https://www.chromium.org/Home/chromium-security/site-isolation <a href="#fnr24-27649" title="return to article" class="reversefootnote">&#8617;&#xFE0E;</a></p>
+</li>
+
+<li id="fn25-27649">
+<p>https://www.chromium.org/developers/design-documents/process-models <a href="#fnr25-27649" title="return to article" class="reversefootnote">&#8617;&#xFE0E;</a></p>
+</li>
+
+<li id="fn26-27649">
+<p>https://v8.dev <a href="#fnr26-27649" title="return to article" class="reversefootnote">&#8617;&#xFE0E;</a></p>
+</li>
+
+</ol>
+</div>
+
+</body>
+</html>
